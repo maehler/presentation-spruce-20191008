@@ -1,0 +1,6 @@
+.shrink {
+    -webkit-transform: scale(0.1);
+    -moz-transform: scale(0.1);
+    transform: scale(0.1);
+    transition: all 1s ease;
+}

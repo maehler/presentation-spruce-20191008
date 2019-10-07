@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <title>reveal.js</title>
+        <title>Spruce assembly update</title>
 
         <link rel="stylesheet" href="css/reveal.css">
         <link rel="stylesheet" href="css/theme/maehler_dark.css">
@@ -34,11 +34,155 @@
         <div class="twitterlink"><a href="https://twitter.com/nmaehler"><i class="fab fa-twitter"></i>@nmaehler</a></div>
         <div class="reveal">
             <div class="slides">
-                <section>
-                    <h1>Slide 1</h1>
+                <section data-background-image="https://farm6.staticflickr.com/5690/21457742918_964178f889_o_d.jpg"
+                         data-background-opacity="0.3">
+                    <!-- Background photo: https://www.flickr.com/photos/befuddledsenses/21457742918/ -->
+                    <h1>Spruce assembly update</h1>
+                    <p>
+                        <small>Niklas Mähler</small><br>
+                        <small>Uppsala 2019-10-08</small>
+                    </p>
                 </section>
+
                 <section>
-                    <h1>Slide 2</h1>
+                    <h1>Data</h1>
+                    <ul>
+                        <li>50x PacBio subsampled to 30x</li>
+                        <li>Mitochondrial and chloroplast reads filtered</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Software</h1>
+                    <ul>
+                        <li>MARVEL</li>
+                        <li>wtdbg2</li>
+                        <li>Flye</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <section >
+                        <h1>MARVEL</h1>
+                        <img style="width: 75%;" src="img/nowoshilow_etal.png" alt="Nowoshilow et al.">
+                    </section>
+
+                    <section>
+                        <p>In our experience: very slow and CPU-hungry</p>
+                        <p>There are however things implemented in order to bring down CPU time and disk space requirements</p>
+                        <aside class="notes">
+                            <p>MARVEL is not very user friendly.
+                            The documentation is lacking a lot of detail, and as soon as things start to misbehave, it is really hard to pinpoint the cause of the issue.
+                            One example is the quality scores used to determine how much is trimmed.
+                            When in use, they look like a phred score, but after digging in the source code and the blog of Gene Myers, it turns out that they represent the percentage of mismatches in the alignments.</p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Masking server</h2>
+                        <p>Dynamically mask repeats as you go</p>
+                        <ul>
+                            <li class="fragment">Published axolotl: 100k CPU hours</li>
+                            <li class="fragment">Spruce: 2M CPU hours</li>
+                            <li class="fragment">Axolotl on Rackham: ~4M CPU hours</li>
+                        </ul>
+                        <aside class="notes">
+                            <p>
+                                I imagine that this could be due to a couple of things: either that the computer architecture is very different between the two clusters used, or that the compilation of MARVEL could be optimised.
+                            </p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>First results</h2>
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <p>1.4 Gbp assembly&hellip;</p>
+                            <img id="spruce-shrink-img" style="width: 25%; transition: all 1s ease;" src="img/spruce.png" alt="Tiny spruce">
+                        </div>
+                        <div id="spruce-shrink-fragment" class="fragment" style="display: none;"></div>
+                    </section>
+
+                    <section>
+                        <h2>Things to test</h2>
+                        <ul>
+                            <li>Less aggressive read trimming</li>
+                            <li>Investigate network overhead</li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>wtdbg2</h1>
+                        <p style="margin-bottom: 0;">
+                            <small style="font-size: 16pt;">or watchtower...</small><br>
+                            <small style="font-size: 12pt;">or redbean...</small>
+                        </p>
+                        <img style="width: 50%; margin-top: 0;" src="img/ruan_li.png" alt="Nowoshilow et al.">
+                    </section>
+
+                    <section>
+                        <p>Very fast and easy to run</p>
+                    </section>
+
+                    <section>
+                        <h2>First results</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Assembly</th>
+                                    <th>Assembly size</th>
+                                    <th>NG50</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>15x input (v1.x)</td>
+                                    <td>20.9 Gbp</td>
+                                    <td>99.1 kbp</td>
+                                </tr>
+                                <tr>
+                                    <td>30x input (v2.4)</td>
+                                    <td>19.1 Gbp</td>
+                                    <td>131 kbp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>Flye</h1>
+                        <img style="width: 75%;" src="img/kolmogorov_etal.png" alt="Nowoshilow et al.">
+                    </section>
+
+                    <section>
+                        <h2>Just started</h2>
+                        <p>Seems very easy to run, clear messages</p>
+                        <pre style="font-size: 14pt"><code>[2019-10-03 14:53:37] INFO: Reading sequences
+[2019-10-03 15:50:12] ERROR: Maximum sequence limit reached (549755813888)
+[2019-10-03 15:50:13] ERROR: Caught unhandled exception: Input overflow</code></pre>
+                    </section>
+
+                    <section>
+                        <p>Memory hungry</p>
+                        <img src="img/flye_github_issue.png" alt="Flye Github issue">
+                    </section>
+
+                    <section>
+                        <p>Currently running on HPC2N in Umeå</p>
+                        <p><small>Status yesterday at 12:25: 14,700 contigs comprising 3.5 Gbp</small></p>
+                    </section>
+                </section>
+
+                <section>
+                    <h1>Summary</h1>
+                    <ul>
+                        <li class="fragment">MARVEL is slow, and still hasn't yielded a single usable assembly</li>
+                        <li class="fragment">wtdbg2 is fast and produces something that we can work with</li>
+                        <li class="fragment">Flye has potential, but is currently limited when it comes to large genomes</li>
+                    </ul>
                 </section>
             </div>
         </div>
@@ -60,5 +204,6 @@
                 history: true
             });
         </script>
+        <script src="js/customise.js"></script>
     </body>
 </html>
