@@ -4,3 +4,10 @@
     transform: scale(0.1);
     transition: all 1s ease;
 }
+
+.shrink-more {
+    -webkit-transform: scale(0.05);
+    -moz-transform: scale(0.05);
+    transform: scale(0.05);
+    transition: all 1s ease;
+}
